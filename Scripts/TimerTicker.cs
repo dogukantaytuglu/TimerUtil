@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace TimerUtil
 {
-    public sealed class TimersUpdater : MonoBehaviour
+    public sealed class TimerTicker : MonoBehaviour
     {
-        ReadOnlyCollection<Timer> _timers;
+        private ReadOnlyCollection<Timer> _timers;
 
         void Awake()
         {
@@ -13,6 +13,11 @@ namespace TimerUtil
         }
 
         public void Update()
+        {
+            HandleTicking();
+        }
+
+        private void HandleTicking()
         {
             for (var i = _timers.Count - 1; i >= 0; --i)
             {

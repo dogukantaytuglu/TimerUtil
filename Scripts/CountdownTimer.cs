@@ -9,7 +9,7 @@ namespace TimerUtil
         private readonly bool _useRandomDuration;
         private readonly Vector2 _randomDuration;
 
-        private readonly int _loopCount;
+        private int _loopCount;
         private int _remainingLoopCount;
         private float _initialDuration;
         private float _duration;
@@ -93,6 +93,7 @@ namespace TimerUtil
         
         public void SetLoopCount(int loopCount)
         {
+            _loopCount = loopCount;
             _remainingLoopCount = loopCount;
         }
 

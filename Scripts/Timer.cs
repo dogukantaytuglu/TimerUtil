@@ -6,9 +6,9 @@ namespace TimerUtil
     public abstract class Timer
     {
         protected float _seconds;
-        float _currentStartDelay;
+        private float _currentStartDelay;
 
-        Func<bool> _canTickCustomCondition;
+        private Func<bool> _canTickCondition;
 
         public Action OnStarted;
         public Action OnTicked;
@@ -99,9 +99,9 @@ namespace TimerUtil
             OnResumed?.Invoke();
         }
 
-        public void SetCanTickCustomCondition(Func<bool> canTickCustomCondition)
+        public void SetCanTickCondition(Func<bool> canTickCustomCondition)
         {
-            _canTickCustomCondition = canTickCustomCondition;
+            _canTickCondition = canTickCustomCondition;
         }
 
         public void TryTick()
@@ -115,7 +115,7 @@ namespace TimerUtil
             if (State is TimerState.Paused or TimerState.Stopped)
                 return false;
 
-            if (_canTickCustomCondition != null && !_canTickCustomCondition())
+            if (_canTickCondition != null && !_canTickCondition())
                 return false;
 
             return true;

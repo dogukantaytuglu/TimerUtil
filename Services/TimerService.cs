@@ -7,7 +7,7 @@ namespace TimerUtil
     public static class TimerService
     {
         private static readonly List<Timer> Timers = new();
-        private static TimersUpdater _timersUpdater;
+        private static TimerTicker _timerTicker;
 
         public static ReadOnlyCollection<Timer> AllTimers => Timers.AsReadOnly();
 
@@ -43,7 +43,7 @@ namespace TimerUtil
                 UnregisterTimer(timer.Id);
             }
 
-            TryCreateTimersUpdater();
+            TryCreateTimerTicker();
 
             Timers.Add(timer);
         }
@@ -53,47 +53,45 @@ namespace TimerUtil
             return Timers.Find(t => t.Id == id);
         }
 
-        public static bool UnregisterTimer(string id)
+        public static void UnregisterTimer(string id)
         {
             var timer = FindTimerById(id);
-            if (timer == null)
-                return false;
+            if (timer == null) return;
 
-            return UnregisterTimer(timer);
+            UnregisterTimer(timer);
         }
 
-        public static bool UnregisterTimer(Timer timer)
+        public static void UnregisterTimer(Timer timer)
         {
-            var success = Timers.Remove(timer);
-            if (success && Timers.Count == 0)
-                DestroyTimersUpdater();
-
-            return success;
+            if (!Timers.Remove(timer)) return;
+            
+            if (Timers.Count == 0)
+            {
+                DestroyTimerTicker();
+            }
         }
 
-        private static void TryCreateTimersUpdater()
+        private static void TryCreateTimerTicker()
         {
-            if (_timersUpdater)
+            if (_timerTicker)
                 return;
 
-            var timersGameObject = CreateTimersUpdater();
+            _timerTicker = CreateTimerTicker();
+        }
 
+        static TimerTicker CreateTimerTicker()
+        {
+            var timersGameObject = new GameObject(nameof(TimerTicker));
             GameObject.DontDestroyOnLoad(timersGameObject);
+            var timerTicker = timersGameObject.AddComponent<TimerTicker>();
+            return timerTicker;
         }
 
-        // ReSharper disable Unity.PerformanceAnalysis
-        static GameObject CreateTimersUpdater()
+        private static void DestroyTimerTicker()
         {
-            var timersGameObject = new GameObject("Timers Updater");
-            _timersUpdater = timersGameObject.AddComponent<TimersUpdater>();
-            return timersGameObject;
-        }
-
-        private static void DestroyTimersUpdater()
-        {
-            if (!_timersUpdater) return;
-            GameObject.Destroy(_timersUpdater.gameObject);
-            _timersUpdater = null;
+            if (!_timerTicker) return;
+            GameObject.Destroy(_timerTicker.gameObject);
+            _timerTicker = null;
         }
     }
 }
