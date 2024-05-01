@@ -5,23 +5,23 @@ namespace TimerUtil
 {
     public abstract class Timer
     {
-        protected float _seconds;
-        private float _currentStartDelay;
-
-        private Func<bool> _canTickCondition;
+        public string Id { get; }
+        public TimerState State { get; private set; }
+        public float Seconds => _seconds;
+        public static implicit operator float(Timer timer) => timer.Seconds;
 
         public Action OnStarted;
         public Action OnTicked;
         public Action OnPaused;
         public Action OnResumed;
         public Action OnStopped;
+        
+        protected float _seconds;
+        
+        private float _currentStartDelay;
+        private Func<bool> _canTickCondition;
 
-        public static implicit operator float(Timer timer) => timer.Seconds;
-
-        public string Id { get; }
-        public TimerState State { get; private set; }
-        public float Seconds => _seconds;
-
+        
         public Timer(string id = null)
         {
             Id = id;
@@ -99,9 +99,9 @@ namespace TimerUtil
             OnResumed?.Invoke();
         }
 
-        public void SetCanTickCondition(Func<bool> canTickCustomCondition)
+        public void SetCanTickCondition(Func<bool> predicate)
         {
-            _canTickCondition = canTickCustomCondition;
+            _canTickCondition = predicate;
         }
 
         public void TryTick()
