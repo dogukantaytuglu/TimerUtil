@@ -1,0 +1,10 @@
+{
+  "name" : "com.dogukantaytuglu.timerUtility",
+  "version" : "1.0.0",
+  "displayName" : "TimerUtility",
+  "description": "Light weight timer utility",
+  "unity" : "2021.1",
+  "author": {
+    "name": "Dogukan Taytuglu"
+  }
+}
