@@ -63,12 +63,7 @@ namespace TimerUtil
 
         public static void UnregisterTimer(Timer timer)
         {
-            if (!Timers.Remove(timer)) return;
-            
-            if (Timers.Count == 0)
-            {
-                DestroyTimerTicker();
-            }
+            Timers.Remove(timer);
         }
 
         private static void TryCreateTimerTicker()
@@ -79,19 +74,12 @@ namespace TimerUtil
             _timerTicker = CreateTimerTicker();
         }
 
-        static TimerTicker CreateTimerTicker()
+        private static TimerTicker CreateTimerTicker()
         {
             var timersGameObject = new GameObject(nameof(TimerTicker));
             GameObject.DontDestroyOnLoad(timersGameObject);
             var timerTicker = timersGameObject.AddComponent<TimerTicker>();
             return timerTicker;
-        }
-
-        private static void DestroyTimerTicker()
-        {
-            if (!_timerTicker) return;
-            GameObject.Destroy(_timerTicker.gameObject);
-            _timerTicker = null;
         }
     }
 }
