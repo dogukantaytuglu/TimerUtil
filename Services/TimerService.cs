@@ -34,18 +34,30 @@ namespace TimerUtil
 
         public static void RegisterTimer(Timer timer)
         {
-            if (Timers.Contains(timer))
-                return;
+            if (Timers.Contains(timer)) return;
 
-            var isValidId = !string.IsNullOrEmpty(timer.Id);
-            if (isValidId && Timers.Exists(t => t.Id == timer.Id))
-            {
-                UnregisterTimer(timer.Id);
-            }
+            TryUnregisterTimerWithSameId(timer);
 
-            TryCreateTimerTicker();
+            ValidateTimerTicker();
 
             Timers.Add(timer);
+        }
+
+        private static void ValidateTimerTicker()
+        {
+            if (_timerTicker) return;
+            _timerTicker = CreateTimerTicker();
+        }
+
+        private static void TryUnregisterTimerWithSameId(Timer timer)
+        {
+            var timerId = timer.Id;
+            var isValidId = !string.IsNullOrEmpty(timerId);
+
+            if (isValidId && Timers.Exists(t => t.Id == timerId))
+            {
+                UnregisterTimer(timer);
+            }
         }
 
         public static Timer FindTimerById(string id)
@@ -66,18 +78,10 @@ namespace TimerUtil
             Timers.Remove(timer);
         }
 
-        private static void TryCreateTimerTicker()
-        {
-            if (_timerTicker)
-                return;
-
-            _timerTicker = CreateTimerTicker();
-        }
-
         private static TimerTicker CreateTimerTicker()
         {
             var timersGameObject = new GameObject(nameof(TimerTicker));
-            GameObject.DontDestroyOnLoad(timersGameObject);
+            Object.DontDestroyOnLoad(timersGameObject);
             var timerTicker = timersGameObject.AddComponent<TimerTicker>();
             return timerTicker;
         }
